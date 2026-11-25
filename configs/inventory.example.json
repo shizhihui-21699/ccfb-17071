@@ -1,0 +1,25 @@
+{
+  "snapshot": "example-2026-03-01",
+  "instances": [
+    {"id": "i-0a1b2c3d", "private_addrs": ["10.0.1.10"], "nat_gateway_ids": ["nat-1"], "subnet_id": "subnet-a", "vpc_id": "vpc-1", "account_id": "111122223333", "iam_role": "web-role"},
+    {"id": "i-0e4f5g6h", "private_addrs": ["10.0.1.20"], "nat_gateway_ids": ["nat-1"], "subnet_id": "subnet-a", "vpc_id": "vpc-1", "account_id": "111122223333", "iam_role": "web-role"}
+  ],
+  "fleets": [
+    {"id": "eks-prod", "kind": "eks", "nodes": ["i-0a1b2c3d"], "pod_cidrs": ["10.0.3.0/24"], "nat_gateway_ids": ["nat-1"], "account_id": "111122223333"}
+  ],
+  "functions": [
+    {"id": "fn-vpc", "enis": ["10.0.2.50"], "vpc_id": "vpc-1", "nat_gateway_ids": ["nat-1"], "account_id": "111122223333"},
+    {"id": "fn-novpc", "account_id": "111122223333"}
+  ],
+  "proxies": [
+    {"id": "egress-proxy-1", "cidrs": ["10.0.9.0/24"], "account_id": "111122223333", "forwarding": true}
+  ],
+  "records": [
+    {"cidr": "10.0.1.10", "kind": "instance", "specificity": "exact", "instance_id": "i-0a1b2c3d", "subnet_id": "subnet-a", "nat_gateway": "nat-1", "account_id": "111122223333", "zone": "account", "source": "ec2:describe-instances"},
+    {"cidr": "10.0.1.20", "kind": "instance", "specificity": "exact", "instance_id": "i-0e4f5g6h", "subnet_id": "subnet-a", "nat_gateway": "nat-1", "account_id": "111122223333", "zone": "account", "source": "ec2:describe-instances"},
+    {"cidr": "203.0.113.45", "kind": "nat", "specificity": "ambiguous", "nat_gateway": "nat-1", "subnet_id": "subnet-a", "account_id": "111122223333", "zone": "account", "shared_egress": true, "source": "ec2:describe-nat-gateways"},
+    {"cidr": "10.0.2.50", "kind": "function_eni", "specificity": "exact", "function_id": "fn-vpc", "account_id": "111122223333", "zone": "account", "source": "lambda:list-functions"},
+    {"cidr": "10.0.3.0/24", "kind": "fleet_pod", "specificity": "scoped", "fleet_id": "eks-prod", "account_id": "111122223333", "zone": "account", "source": "eks:pod-cidrs"},
+    {"cidr": "10.0.9.0/24", "kind": "proxy", "specificity": "ambiguous", "proxy_id": "egress-proxy-1", "account_id": "111122223333", "zone": "account", "shared_egress": true, "source": "policy:egress-proxies"}
+  ]
+}

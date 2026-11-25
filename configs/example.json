@@ -1,0 +1,46 @@
+{
+  "listen_addr": ":8080",
+  "providers": ["aws"],
+  "policy": {
+    "auto_revoke_min_score": 85,
+    "auto_revoke_requires_conclusive": true,
+    "alert_min_score": 50,
+    "watch_min_score": 20,
+    "concurrency_window": "15m",
+    "lag_warn": "3m",
+    "lag_crit": "15m",
+    "watch_escalation_count": 3,
+    "watch_escalation_window": "30m",
+    "expiry_grace": "10m",
+    "untrusted_anomaly_score": 10
+  },
+  "inventory": {
+    "max_age": "10m",
+    "provider_ranges": ["52.94.0.0/16", "3.5.0.0/16"],
+    "blocklist": ["185.220.101.0/24"],
+    "allow_provider_egress_default": true
+  },
+  "response": {
+    "enabled": true,
+    "dry_run": true,
+    "min_severity": "high",
+    "principal_mechanism": "principal_deny",
+    "cooldown_seconds": 600,
+    "max_actions_per_minute": 30
+  },
+  "pipeline": {
+    "workers": 4,
+    "queue_size": 4096,
+    "dedup_retention": "6h",
+    "dedup_max_ids": 500000,
+    "alert_dedupe_window": "15m"
+  },
+  "sources": {
+    "http_path": "/v1/audit",
+    "files": []
+  },
+  "alerts": {
+    "webhook_url": "",
+    "timeout": "5s"
+  }
+}
